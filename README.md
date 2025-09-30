@@ -49,6 +49,3 @@ This repository is licensed under the **MIT License** (feel free to modify based
 - Geomatics Engineering Division, IIT Roorkee  
 - Google Earth Engine for free satellite data access and processing
 ```
-
----
-

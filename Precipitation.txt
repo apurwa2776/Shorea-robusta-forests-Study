@@ -1,0 +1,177 @@
+
+Map.addLayer(roi);
+Map.centerObject(roi,7);
+
+                                         //SOS //
+// load the MODIS PP dataset (16 day)
+var dataset_SOS_2017 = ee.ImageCollection('ECMWF/ERA5/MONTHLY')
+          .filter(ee.Filter.date('2017-03-01', '2017-04-30'))
+          .filterBounds(roi);
+          
+
+var dataset_SOS_2018 = ee.ImageCollection('ECMWF/ERA5/MONTHLY')
+          .filter(ee.Filter.date('2018-03-01', '2018-04-30'))
+          .filterBounds(roi);
+          
+
+
+var dataset_SOS_2019 = ee.ImageCollection('ECMWF/ERA5/MONTHLY')
+          .filter(ee.Filter.date('2019-03-01', '2019-04-30'))
+          .filterBounds(roi);
+        
+         
+         
+var dataset_SOS_2020 = ee.ImageCollection('ECMWF/ERA5/MONTHLY')
+          .filter(ee.Filter.date('2020-03-01', '2020-04-30'))
+          .filterBounds(roi);
+         
+
+
+// select Precipitation (PP) band
+
+var PP_SOS_collection_2017 = dataset_SOS_2017.select('total_precipitation');
+print(PP_SOS_collection_2017,'Collection of PP_SOS images');
+// Define and calculate the mean bands and the other index statistics
+var PPmean_SOS_2017 = PP_SOS_collection_2017.select('total_precipitation').reduce(ee.Reducer.mean()).rename("PP_SOS_2017").clip(roi);
+var PPmean_SOS_2017 = PPmean_SOS_2017.divide(50);
+print(PPmean_SOS_2017,'PP_SOS_2017');
+
+
+var PP_SOS_collection_2018 = dataset_SOS_2018.select('total_precipitation');
+print(PP_SOS_collection_2018,'Collection of PP_SOS images');
+// Define and calculate the mean bands and the other index statistics
+var PPmean_SOS_2018 = PP_SOS_collection_2018.select('total_precipitation').reduce(ee.Reducer.mean()).rename("PP_SOS_2018").clip(roi);
+var PPmean_SOS_2018 = PPmean_SOS_2018.divide(50);
+print(PPmean_SOS_2018,'PP_SOS_2018');
+
+var PP_SOS_collection_2019 = dataset_SOS_2019.select('total_precipitation');
+print(PP_SOS_collection_2019,'Collection of PP_SOS images');
+// Define and calculate the mean bands and the other index statistics
+var PPmean_SOS_2019 = PP_SOS_collection_2019.select('total_precipitation').reduce(ee.Reducer.mean()).rename("PP_SOS_2019").clip(roi);
+var PPmean_SOS_2019 = PPmean_SOS_2019.divide(50);
+print(PPmean_SOS_2019,'PP_SOS_2019');
+
+var PP_SOS_collection_2020 = dataset_SOS_2020.select('total_precipitation');
+print(PP_SOS_collection_2020,'Collection of PP_SOS images');
+// Define and calculate the mean bands and the other index statistics
+var PPmean_SOS_2020 = PP_SOS_collection_2020.select('total_precipitation').reduce(ee.Reducer.mean()).rename("PP_SOS_2020").clip(roi);
+var PPmean_SOS_2020 = PPmean_SOS_2020.divide(50);
+print(PPmean_SOS_2020,'PP_SOS_2020');
+
+//Add the index statistics to the median bands and clip the dataset with the ROI
+var PP_composite_SOS = PPmean_SOS_2017.addBands(PPmean_SOS_2018).addBands(PPmean_SOS_2019).addBands(PPmean_SOS_2020).reduce(ee.Reducer.mean()).rename("PP_SOS_composite").clip(roi);
+print("PP_Composite_SOS", PP_composite_SOS);
+
+
+// Define a palette for the 18 distinct land cover classes.
+var PP_pal = [
+  '040274', '040281', '0502a3', '0502b8', '0502ce', '0502e6',
+    '0602ff', '235cb1', '307ef3', '269db1', '30c8e2', '32d3ef',
+    '3be285', '3ff38f', '86e26f', '3ae237', 'b5e22e', 'd6e21f',
+    'fff705', 'ffd611', 'ffb613', 'ff8b13', 'ff6e08', 'ff500d',
+    'ff0000', 'de0101', 'c21301', 'a71001', '911003'];
+
+// Display NDVI_SOS results on map
+Map.addLayer(PP_composite_SOS, {min:0, max:350, palette: PP_pal}, 'PP_composite_SOS');
+
+                                         //EOS //
+// load the MODIS PP dataset (16 day)
+var dataset_EOS_2017 = ee.ImageCollection('ECMWF/ERA5/MONTHLY')
+          .filter(ee.Filter.date('2017-10-01', '2017-11-30'))
+          .filterBounds(roi);
+          
+
+var dataset_EOS_2018 = ee.ImageCollection('ECMWF/ERA5/MONTHLY')
+          .filter(ee.Filter.date('2018-10-01', '2018-11-30'))
+          .filterBounds(roi);
+          
+
+
+var dataset_EOS_2019 = ee.ImageCollection('ECMWF/ERA5/MONTHLY')
+          .filter(ee.Filter.date('2019-10-01', '2019-11-30'))
+          .filterBounds(roi);
+        
+         
+         
+var dataset_EOS_2020 = ee.ImageCollection('ECMWF/ERA5/MONTHLY')
+          .filter(ee.Filter.date('2020-10-01', '2020-11-30'))
+          .filterBounds(roi);
+         
+
+
+// select PP band
+
+var PP_EOS_collection_2017 = dataset_EOS_2017.select('total_precipitation');
+print(PP_EOS_collection_2017,'Collection of PP_EOS images');
+// Define and calculate the mean bands and the other index statistics
+var PPmean_EOS_2017 = PP_EOS_collection_2017.select('total_precipitation').reduce(ee.Reducer.mean()).rename("PP_EOS_2017").clip(roi);
+var PPmean_EOS_2017 = PPmean_EOS_2017.divide(50);
+print(PPmean_EOS_2017,'PP_EOS_2017');
+
+
+var PP_EOS_collection_2018 = dataset_EOS_2018.select('total_precipitation');
+print(PP_EOS_collection_2018,'Collection of PP_EOS images');
+// Define and calculate the mean bands and the other index statistics
+var PPmean_EOS_2018 = PP_EOS_collection_2018.select('total_precipitation').reduce(ee.Reducer.mean()).rename("PP_EOS_2018").clip(roi);
+var PPmean_EOS_2018 = PPmean_EOS_2018.divide(50);
+print(PPmean_EOS_2018,'PP_EOS_2018');
+
+var PP_EOS_collection_2019 = dataset_EOS_2019.select('total_precipitation');
+print(PP_EOS_collection_2019,'Collection of PP_EOS images');
+// Define and calculate the mean bands and the other index statistics
+var PPmean_EOS_2019 = PP_EOS_collection_2019.select('total_precipitation').reduce(ee.Reducer.mean()).rename("PP_EOS_2019").clip(roi);
+var PPmean_EOS_2019 = PPmean_EOS_2019.divide(50);
+print(PPmean_EOS_2019,'PP_EOS_2019');
+
+var PP_EOS_collection_2020 = dataset_EOS_2020.select('total_precipitation');
+print(PP_EOS_collection_2020,'Collection of PP_EOS images');
+// Define and calculate the mean bands and the other index statistics
+var PPmean_EOS_2020 = PP_EOS_collection_2020.select('total_precipitation').reduce(ee.Reducer.mean()).rename("PP_EOS_2020").clip(roi);
+var PPmean_EOS_2020 = PPmean_EOS_2020.divide(50);
+print(PPmean_EOS_2020,'PP_EOS_2020');
+
+//Add the index statistics to the median bands and clip the dataset with the ROI
+var PP_composite_EOS = PPmean_EOS_2017.addBands(PPmean_EOS_2018).addBands(PPmean_EOS_2019).addBands(PPmean_EOS_2020).reduce(ee.Reducer.mean()).rename("PP_EOS_composite").clip(roi);
+print("PP_Composite_EOS", PP_composite_EOS);
+
+
+// Define a palette for the 18 distinct land cover classes.
+var PP_pal = [
+  '040274', '040281', '0502a3', '0502b8', '0502ce', '0502e6',
+    '0602ff', '235cb1', '307ef3', '269db1', '30c8e2', '32d3ef',
+    '3be285', '3ff38f', '86e26f', '3ae237', 'b5e22e', 'd6e21f',
+    'fff705', 'ffd611', 'ffb613', 'ff8b13', 'ff6e08', 'ff500d',
+    'ff0000', 'de0101', 'c21301', 'a71001', '911003'];
+
+// Display NDVI_EOS results on map
+Map.addLayer(PP_composite_EOS, {min:0, max:350, palette: PP_pal}, 'PP_composite_EOS');
+
+
+
+                          //////////// TNPI_PP Generation ////////////////
+
+/*
+var diff = ((PP_composite_EOS.select('PP_EOS_composite')).subtract(PP_composite_SOS.select('PP_SOS_composite')))
+  .divide((PP_composite_EOS.select('PP_EOS_composite')).add(PP_composite_SOS.select('PP_SOS_composite'))).rename("TNPI_PP");
+*/
+
+var diff = ((PP_composite_EOS.select('PP_EOS_composite')).subtract(PP_composite_SOS.select('PP_SOS_composite')))
+
+print("TNPI_PP", diff);
+  
+Map.addLayer(diff.clip(roi),
+             {min:-1.0, max:1.0, palette: PP_pal}, 'TNPI_PP');  
+
+
+// Export a cloud-optimized GeoTIFF.
+Export.image.toDrive({
+  image: diff,
+  region: roi,
+  description: 'TNPI_PP_ERA5_Composite',
+  scale: 250,
+  maxPixels: 1e12,
+  fileFormat: 'GeoTIFF',
+  formatOptions: {
+    cloudOptimized: true
+  }
+});

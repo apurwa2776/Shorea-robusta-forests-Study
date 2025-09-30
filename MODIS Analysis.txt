@@ -1,0 +1,111 @@
+
+Map.addLayer(regions);
+
+
+var division = function(image) {
+  return image.addBands(image.divide(10000));
+    // Convert milliseconds from epoch to years to aid in
+    // interpretation of the following trend calculation.
+   
+};
+
+ 
+
+// load the MODIS NDVI dataset (16 day)
+var dataset = ee.ImageCollection('MODIS/006/MOD13Q1')
+          .filter(ee.Filter.date('2017-01-01', '2020-12-31'))
+          .filterBounds(regions)
+          //.select('NDVI')
+          .map(division);
+         
+         
+
+// select NDVI bands
+//var MODIS = ee.ImageCollection(dataset)
+//          .map(division)
+         
+var MODISNDVI = dataset.select('NDVI');
+
+
+// print MODIS NDVI Dataset
+//print('MODIS NDVI Image collection', MODISNDVI);
+
+
+// reduce the NDVI image collection to a single image with stacked bands
+function collToBands(imageCollection, bandName) {
+  // stack all the bands to one single image
+  // change the name of the bandname to the date it is acquired
+  var changedNames = imageCollection.map( function(img){
+    //var name = ee.Date(img.get('system:time_start')).format('D');
+    //var name1 = ee.String(img.id()); // gives date
+    var name1 = ee.Date(img.get('system:time_start')).format('yyyy-MM-dd');
+    var name2 = ee.String("MODIS/006/MOD13Q1/");
+    var name3= name2.cat(name1);
+    var name4 = ee.Date(img.get('system:time_start')).format('D');
+    var name = name3.cat(name4);
+    //var dateString = ee.Date(img.get('system:time_start')).format('yyyy-MM-dd');
+    return img.select(bandName).rename(name);
+  });
+ 
+  // Apply the function toBands() on the image collection to set all bands into one image
+  var multiband = changedNames.toBands();
+  // Reset the bandnames
+  var names = multiband.bandNames();
+  // rename the bandnames
+  var newNames = names.map(function(name){
+    var ind = names.indexOf(name);
+    return ee.String(names.get(ind)).slice(11);
+  });
+  return multiband.rename(newNames);  
+}
+
+
+
+// apply the function and print to console
+var multiband = collToBands(MODISNDVI, "NDVI");
+var multiband = multiband.divide(10000);
+print('collection to bands', multiband);
+
+
+
+// calculate the NDVI over the time span at every polygon in the AOI
+var NDVI_values = multiband
+  .reduceRegions({
+    collection: regions,
+    reducer: ee.Reducer.mean(),
+    scale: 250
+  });
+
+print('feature collection of NDVI', NDVI_values);
+//var Date_Start = ee.Date('2018-01-01');
+//var Date_End = ee.Date('2018-12-01');
+//var days = ee.List.sequence(Date_Start, Date_End);
+//  '225': 225,
+//  '241': 241,
+//};
+
+var days = multiband.bandNames();
+var chart1 =
+  ui.Chart.feature.byProperty(NDVI_values,days,'name')
+    .setChartType('ScatterChart')
+    .setOptions({
+      title: '16 day average NDVI ',
+      hAxis: {
+        title: 'Month'
+      },
+      vAxis: {
+        title: 'NDVI'
+      },
+      lineWidth: 1,
+      pointSize: 3
+    });
+
+
+print (chart1);
+
+Export.table.toDrive({
+  collection: NDVI_values,
+  description: 'Hyrcanian_NDVI_15sites',
+  fileNamePrefix: 'Hyrcanian_NDVI_15sites',
+  fileFormat: 'CSV'
+});

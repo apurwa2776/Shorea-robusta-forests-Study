@@ -1,0 +1,233 @@
+
+//// Time 1///
+var period_of_interest = ee.Filter.date('2019-03-01', '2019-05-30');
+var inBands = ["B4","B8"];
+var outBands = inBands.concat("NDVI");
+
+Map.centerObject(roi,12);
+
+//Function to mask the clouds in Sentinel-2
+function maskS2clouds(image) {
+  var qa = image.select('QA60');
+
+  // Bits 10 and 11 are clouds and cirrus, respectively.
+  var cloudBitMask = 1 << 10;
+  var cirrusBitMask = 1 << 11;
+
+  // Both flags should be set to zero, indicating clear conditions.
+  var mask = qa.bitwiseAnd(cloudBitMask).eq(0)
+      .and(qa.bitwiseAnd(cirrusBitMask).eq(0));
+
+  return image.updateMask(mask).divide(10000);
+}
+
+//Build the Sentinel 2 collection, filtered by date, bounds and percentage of cloud cover 
+var dataset = ee.ImageCollection('COPERNICUS/S2_SR')
+                  .filter(period_of_interest)
+                  .filterBounds(roi)
+                  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE',10))
+                  .map(maskS2clouds);
+print("Sentinel 2 Image Collection",dataset);
+
+
+//Add NDVI and BSI spectral indices
+var addNDVI = function(image) {var ndvi = image.normalizedDifference(['B8', 'B4'])
+  .rename('NDVI')
+  .copyProperties(image,['system:time_start']);
+  return image.addBands(ndvi);
+};
+
+//Collection with all images also containing the NDVI and BSI indices
+var collection = dataset.select(inBands).map(addNDVI);
+print(collection,'Collection with inBands and Statistic indices');
+
+// Define and calculate the median bands and the other index statistics
+var band_median = collection.select(inBands).median();
+var ndvimean = collection.select('NDVI').reduce(ee.Reducer.mean()).rename("NDVI");
+
+//Add the index statistics to the median bands and clip the dataset with the ROI
+var compclip = band_median.addBands(ndvimean).clip(roi);
+print("Composition", compclip);
+
+//Select and extract the images with the desideres bands defined as outBands
+var final_bands= compclip.select(outBands);
+print("Bands of the final image", final_bands);
+
+// only multispectral individual bands
+var msiclip = band_median.clip(roi);
+print("Composition_MSI", msiclip);
+
+//Select and extract the images with the desideres bands defined as inbands multispectral individual bands
+var final_bands_msi= msiclip.select(inBands);
+print("individual composite of bands ", final_bands_msi);
+
+
+//Visualization of the final dataset using RGB and CIR
+//Map.addLayer(final_bands, {  min: 0.0, max: 0.3, bands: ['B4', 'B3', 'B2'],}, 'RGB');
+//Map.addLayer(final_bands, {  min: 0.0, max: 0.3, bands: ['B8', 'B4', 'B3'],}, 'CIR');
+
+// Define a palette for the 18 distinct land cover classes.
+var NDVI_pal = [
+  '#008800','#fbff2a','#c2b2bc','#88ff72','#1e82ff', '#1c8b08', '#88ff72','004C00', '023B01', '012E01', '011D01', '011301',
+  
+];
+// Display NDVI results on map
+Map.addLayer(ndvimean.clip(roi), {min:-0.5, max:0.9, palette: NDVI_pal}, 'NDVI');
+// Display EVI results on map
+
+/*
+// Export a cloud-optimized GeoTIFF.
+Export.image.toDrive({
+  image: ndvimean,
+  region: roi,
+  description: 'NDVI',
+  scale: 10,
+  fileFormat: 'GeoTIFF',
+  formatOptions: {
+    cloudOptimized: true
+  }
+});
+*/
+
+// Time2/////
+var period_of_interest_MJ = ee.Filter.date('2019-10-01', '2019-11-30');
+var inBands_MJ = ["B4","B8"];
+var outBands_MJ = inBands_MJ.concat("NDVI_MJ");
+
+Map.centerObject(roi,12);
+
+//Function to mask the clouds in Sentinel-2
+function maskS2clouds(image) {
+  var qa = image.select('QA60');
+
+  // Bits 10 and 11 are clouds and cirrus, respectively.
+  var cloudBitMask = 1 << 10;
+  var cirrusBitMask = 1 << 11;
+
+  // Both flags should be set to zero, indicating clear conditions.
+  var mask = qa.bitwiseAnd(cloudBitMask).eq(0)
+      .and(qa.bitwiseAnd(cirrusBitMask).eq(0));
+
+  return image.updateMask(mask).divide(10000);
+}
+
+//Build the Sentinel 2 collection, filtered by date, bounds and percentage of cloud cover 
+var dataset_MJ = ee.ImageCollection('COPERNICUS/S2_SR')
+                  .filter(period_of_interest_MJ)
+                  .filterBounds(roi)
+                  .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE',10))
+                  .map(maskS2clouds);
+print("Sentinel 2 Image Collection_MJ",dataset_MJ);
+
+
+//Add NDVI and BSI spectral indices
+var addNDVI_MJ = function(image) {var ndvi_MJ = image.normalizedDifference(['B8', 'B4'])
+  .rename('NDVI_MJ')
+  .copyProperties(image,['system:time_start']);
+  return image.addBands(ndvi_MJ);
+};
+
+
+//Collection with all images also containing the NDVI and BSI indices
+var collection_MJ = dataset_MJ.select(inBands_MJ).map(addNDVI_MJ);
+print(collection_MJ,'Collection with inBands and Statistic indices_MJ');
+
+// Define and calculate the median bands and the other index statistics
+var band_median_MJ = collection_MJ.select(inBands_MJ).median();
+var ndvimean_MJ = collection_MJ.select('NDVI_MJ').reduce(ee.Reducer.mean()).rename("NDVI_MJ");
+
+//Add the index statistics to the median bands and clip the dataset with the ROI
+var compclip_MJ = band_median_MJ.addBands(ndvimean_MJ).clip(roi);
+print("Composition_MJ", compclip_MJ);
+
+//Select and extract the images with the desideres bands defined as outBands
+var final_bands_MJ= compclip_MJ.select(outBands_MJ);
+print("Bands of the final image", final_bands_MJ);
+
+// only multispectral individual bands
+var msiclip_MJ = band_median_MJ.clip(roi);
+print("Composition_MSI_MJ", msiclip_MJ);
+
+//Select and extract the images with the desideres bands defined as inbands multispectral individual bands
+var final_bands_msi_MJ= msiclip_MJ.select(inBands_MJ);
+print("individual composite of bands_MJ ", final_bands_msi_MJ);
+
+
+//Visualization of the final dataset using RGB and CIR
+//Map.addLayer(final_bands_MJ, {  min: 0.0, max: 0.3, bands: ['B4', 'B3', 'B2'],}, 'RGB');
+//Map.addLayer(final_bands_MJ, {  min: 0.0, max: 0.3, bands: ['B8', 'B4', 'B3'],}, 'CIR');
+
+// Define a palette for the 18 distinct land cover classes.
+var NDVI_pal = [
+  '#008800','#fbff2a','#c2b2bc','#88ff72','#1e82ff', '#1c8b08', '#88ff72','004C00', '023B01', '012E01', '011D01', '011301',
+  
+];
+// Display NDVI results on map
+Map.addLayer(ndvimean_MJ.clip(roi), {min:-0.5, max:0.9, palette: NDVI_pal}, 'NDVI_MJ');
+
+
+//////////// TNPI Generation ////////////////
+
+// Compute TNPI.
+//var diff = ndvimean_MJ.subtract(ndvimean)
+//  .divide(ndvimean_MJ.add(ndvimean));
+
+
+var diff = ((ndvimean_MJ.select('NDVI_MJ')).subtract(ndvimean.select('NDVI')))
+  .divide((ndvimean_MJ.select('NDVI_MJ')).add(ndvimean.select('NDVI')));
+
+print("TNPI", diff);
+  
+Map.addLayer(diff.clip(roi),
+             {min:0.0, max:1.0, palette: NDVI_pal}, 'TNPI');  
+
+/*
+// Export a cloud-optimized GeoTIFF.
+Export.image.toDrive({
+  image: ndvimean_MJ,
+  region: roi,
+  description: 'NDVI_MJ',
+  scale: 10,
+  fileFormat: 'GeoTIFF',
+  formatOptions: {
+    cloudOptimized: true
+  }
+});
+*/
+
+
+
+// Export a cloud-optimized GeoTIFF.
+Export.image.toDrive({
+  image: diff,
+  region: roi,
+  description: 'TNPI_Growth_2019_p3',
+  scale: 10,
+  maxPixels: 1e12,
+  fileFormat: 'GeoTIFF',
+  formatOptions: {
+    cloudOptimized: true
+  }
+});
+
+
+/*
+//Export the image to an Earth Engine asset
+Export.image.toAsset({
+  image: diff,
+  region: roi,
+  description: 'TNPI_Growth_2019',
+  scale: 30
+});
+*/
+
+
+
+
+
+
+
+
+
+
+

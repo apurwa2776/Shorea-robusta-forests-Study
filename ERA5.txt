@@ -1,0 +1,174 @@
+
+Map.addLayer(roi);
+Map.centerObject(roi,7);
+
+                                         //SOS //
+// load the MODIS LST dataset (16 day)
+var dataset_SOS_2017 = ee.ImageCollection("MODIS/006/MOD11A2")
+          .filter(ee.Filter.date('2017-03-01', '2017-04-30'))
+          .filterBounds(roi);
+          
+
+var dataset_SOS_2018 = ee.ImageCollection("MODIS/006/MOD11A2")
+          .filter(ee.Filter.date('2018-03-01', '2018-04-30'))
+          .filterBounds(roi);
+          
+
+
+var dataset_SOS_2019 = ee.ImageCollection("MODIS/006/MOD11A2")
+          .filter(ee.Filter.date('2019-03-01', '2019-04-30'))
+          .filterBounds(roi);
+        
+         
+         
+var dataset_SOS_2020 = ee.ImageCollection("MODIS/006/MOD11A2")
+          .filter(ee.Filter.date('2020-03-01', '2020-04-30'))
+          .filterBounds(roi);
+         
+
+
+// select LST band
+
+var LST_SOS_collection_2017 = dataset_SOS_2017.select('LST_Day_1km');
+print(LST_SOS_collection_2017,'Collection of LST_SOS images');
+// Define and calculate the mean bands and the other index statistics
+var LSTmean_SOS_2017 = LST_SOS_collection_2017.select('LST_Day_1km').reduce(ee.Reducer.mean()).rename("LST_SOS_2017").clip(roi);
+var LSTmean_SOS_2017 = LSTmean_SOS_2017.divide(50);
+print(LSTmean_SOS_2017,'LST_SOS_2017');
+
+
+var LST_SOS_collection_2018 = dataset_SOS_2018.select('LST_Day_1km');
+print(LST_SOS_collection_2018,'Collection of LST_SOS images');
+// Define and calculate the mean bands and the other index statistics
+var LSTmean_SOS_2018 = LST_SOS_collection_2018.select('LST_Day_1km').reduce(ee.Reducer.mean()).rename("LST_SOS_2018").clip(roi);
+var LSTmean_SOS_2018 = LSTmean_SOS_2018.divide(50);
+print(LSTmean_SOS_2018,'LST_SOS_2018');
+
+var LST_SOS_collection_2019 = dataset_SOS_2019.select('LST_Day_1km');
+print(LST_SOS_collection_2019,'Collection of LST_SOS images');
+// Define and calculate the mean bands and the other index statistics
+var LSTmean_SOS_2019 = LST_SOS_collection_2019.select('LST_Day_1km').reduce(ee.Reducer.mean()).rename("LST_SOS_2019").clip(roi);
+var LSTmean_SOS_2019 = LSTmean_SOS_2019.divide(50);
+print(LSTmean_SOS_2019,'LST_SOS_2019');
+
+var LST_SOS_collection_2020 = dataset_SOS_2020.select('LST_Day_1km');
+print(LST_SOS_collection_2020,'Collection of LST_SOS images');
+// Define and calculate the mean bands and the other index statistics
+var LSTmean_SOS_2020 = LST_SOS_collection_2020.select('LST_Day_1km').reduce(ee.Reducer.mean()).rename("LST_SOS_2020").clip(roi);
+var LSTmean_SOS_2020 = LSTmean_SOS_2020.divide(50);
+print(LSTmean_SOS_2020,'LST_SOS_2020');
+
+//Add the index statistics to the median bands and clip the dataset with the ROI
+var LST_composite_SOS = LSTmean_SOS_2017.addBands(LSTmean_SOS_2018).addBands(LSTmean_SOS_2019).addBands(LSTmean_SOS_2020).reduce(ee.Reducer.mean()).rename("LST_SOS_composite").clip(roi);
+print("LST_Composite_SOS", LST_composite_SOS);
+
+
+// Define a palette for the 18 distinct land cover classes.
+var LST_pal = [
+  '040274', '040281', '0502a3', '0502b8', '0502ce', '0502e6',
+    '0602ff', '235cb1', '307ef3', '269db1', '30c8e2', '32d3ef',
+    '3be285', '3ff38f', '86e26f', '3ae237', 'b5e22e', 'd6e21f',
+    'fff705', 'ffd611', 'ffb613', 'ff8b13', 'ff6e08', 'ff500d',
+    'ff0000', 'de0101', 'c21301', 'a71001', '911003'];
+
+// Display NDVI_SOS results on map
+Map.addLayer(LST_composite_SOS, {min:0, max:350, palette: LST_pal}, 'LST_composite_SOS');
+
+                                         //EOS //
+// load the MODIS LST dataset (16 day)
+var dataset_EOS_2017 = ee.ImageCollection("MODIS/006/MOD11A2")
+          .filter(ee.Filter.date('2017-10-01', '2017-11-30'))
+          .filterBounds(roi);
+          
+
+var dataset_EOS_2018 = ee.ImageCollection("MODIS/006/MOD11A2")
+          .filter(ee.Filter.date('2018-10-01', '2018-11-30'))
+          .filterBounds(roi);
+          
+
+
+var dataset_EOS_2019 = ee.ImageCollection("MODIS/006/MOD11A2")
+          .filter(ee.Filter.date('2019-10-01', '2019-11-30'))
+          .filterBounds(roi);
+        
+         
+         
+var dataset_EOS_2020 = ee.ImageCollection("MODIS/006/MOD11A2")
+          .filter(ee.Filter.date('2020-10-01', '2020-11-30'))
+          .filterBounds(roi);
+         
+
+
+// select LST band
+
+var LST_EOS_collection_2017 = dataset_EOS_2017.select('LST_Day_1km');
+print(LST_EOS_collection_2017,'Collection of LST_EOS images');
+// Define and calculate the mean bands and the other index statistics
+var LSTmean_EOS_2017 = LST_EOS_collection_2017.select('LST_Day_1km').reduce(ee.Reducer.mean()).rename("LST_EOS_2017").clip(roi);
+var LSTmean_EOS_2017 = LSTmean_EOS_2017.divide(50);
+print(LSTmean_EOS_2017,'LST_EOS_2017');
+
+
+var LST_EOS_collection_2018 = dataset_EOS_2018.select('LST_Day_1km');
+print(LST_EOS_collection_2018,'Collection of LST_EOS images');
+// Define and calculate the mean bands and the other index statistics
+var LSTmean_EOS_2018 = LST_EOS_collection_2018.select('LST_Day_1km').reduce(ee.Reducer.mean()).rename("LST_EOS_2018").clip(roi);
+var LSTmean_EOS_2018 = LSTmean_EOS_2018.divide(50);
+print(LSTmean_EOS_2018,'LST_EOS_2018');
+
+var LST_EOS_collection_2019 = dataset_EOS_2019.select('LST_Day_1km');
+print(LST_EOS_collection_2019,'Collection of LST_EOS images');
+// Define and calculate the mean bands and the other index statistics
+var LSTmean_EOS_2019 = LST_EOS_collection_2019.select('LST_Day_1km').reduce(ee.Reducer.mean()).rename("LST_EOS_2019").clip(roi);
+var LSTmean_EOS_2019 = LSTmean_EOS_2019.divide(50);
+print(LSTmean_EOS_2019,'LST_EOS_2019');
+
+var LST_EOS_collection_2020 = dataset_EOS_2020.select('LST_Day_1km');
+print(LST_EOS_collection_2020,'Collection of LST_EOS images');
+// Define and calculate the mean bands and the other index statistics
+var LSTmean_EOS_2020 = LST_EOS_collection_2020.select('LST_Day_1km').reduce(ee.Reducer.mean()).rename("LST_EOS_2020").clip(roi);
+var LSTmean_EOS_2020 = LSTmean_EOS_2020.divide(50);
+print(LSTmean_EOS_2020,'LST_EOS_2020');
+
+//Add the index statistics to the median bands and clip the dataset with the ROI
+var LST_composite_EOS = LSTmean_EOS_2017.addBands(LSTmean_EOS_2018).addBands(LSTmean_EOS_2019).addBands(LSTmean_EOS_2020).reduce(ee.Reducer.mean()).rename("LST_EOS_composite").clip(roi);
+print("LST_Composite_EOS", LST_composite_EOS);
+
+
+// Define a palette for the 18 distinct land cover classes.
+var LST_pal = [
+  '040274', '040281', '0502a3', '0502b8', '0502ce', '0502e6',
+    '0602ff', '235cb1', '307ef3', '269db1', '30c8e2', '32d3ef',
+    '3be285', '3ff38f', '86e26f', '3ae237', 'b5e22e', 'd6e21f',
+    'fff705', 'ffd611', 'ffb613', 'ff8b13', 'ff6e08', 'ff500d',
+    'ff0000', 'de0101', 'c21301', 'a71001', '911003'];
+
+// Display NDVI_EOS results on map
+Map.addLayer(LST_composite_EOS, {min:0, max:350, palette: LST_pal}, 'LST_composite_EOS');
+
+
+
+                          //////////// TNPI_LST Generation ////////////////
+
+
+var diff = ((LST_composite_EOS.select('LST_EOS_composite')).subtract(LST_composite_SOS.select('LST_SOS_composite')))
+  .divide((LST_composite_EOS.select('LST_EOS_composite')).add(LST_composite_SOS.select('LST_SOS_composite'))).rename("TNPI_LST");
+
+print("TNPI_LST", diff);
+  
+Map.addLayer(diff.clip(roi),
+             {min:-1.0, max:1.0, palette: LST_pal}, 'TNPI_LST');  
+
+
+// Export a cloud-optimized GeoTIFF.
+Export.image.toDrive({
+  image: diff,
+  region: roi,
+  description: 'TNPI_LST_MODIS_Composite',
+  scale: 250,
+  maxPixels: 1e12,
+  fileFormat: 'GeoTIFF',
+  formatOptions: {
+    cloudOptimized: true
+  }
+});

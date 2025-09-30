@@ -1,18 +1,4 @@
 # Shorea-robusta-forests-Study
-Supplementary Google Earth Engine scripts for the paper “Linking Environmental Variables to MODIS and Sentinel-2 Derived Phenology in Western Himalayan Moist Deciduous Forests”. Includes MODIS NDVI phenology, LST ΔLST, ERA5 precipitation ΔPP, and Sentinel-2 TNPI processing.
-
-
-# 📝 **README.md Draft**
-
-```markdown
-# Linking Environmental Variables to MODIS and Sentinel-2 Derived Phenology in Western Himalayan Moist Deciduous Forests
-
-This repository contains the supplementary Google Earth Engine (GEE) scripts used in the paper:
-
-**Chaurasia, A., Khare, S., Das, A. K., & Singh, C. P. (2025). Linking Environmental Variables to MODIS and Sentinel-2 Derived Phenology in Western Himalayan Moist Deciduous Forests. _Frontiers of Earth Science_ (under review).**
-
----
-
 ## 📖 Overview
 The study evaluates vegetation phenology of *Shorea robusta* forests in the Doon Valley (Western Himalayas) using MODIS and Sentinel-2 data (2017–2024).  
 Environmental drivers such as elevation, land surface temperature (ΔLST), and precipitation (ΔPP) were integrated to model phenological dynamics.  
@@ -32,7 +18,7 @@ This repository provides **reproducible code** for:
   - `Code_S3_ERA5_Precipitation.js` – ERA5 precipitation ΔPP and TNPI_PP  
   - `Code_S4_Sentinel2_TNPI.js` – Sentinel-2 NDVI processing and TNPI  
 
-- `data/` – (optional) Example ROI shapefile/GeoJSON for testing  
+ 
 
 ---
 
@@ -50,13 +36,6 @@ All scripts are written in **JavaScript for the GEE Code Editor**.
 3. Upload your ROI shapefile/GeoJSON into the GEE Assets or directly define it in the script.  
 4. Run the scripts to generate NDVI, LST, precipitation composites, and TNPI layers.  
 5. Export results as GeoTIFF/CSV to Google Drive.  
-
----
-
-## 📜 Citation
-If you use these scripts, please cite the associated paper:
-
-> Chaurasia, A., Khare, S., Das, A. K., & Singh, C. P. (2025). Linking Environmental Variables to MODIS and Sentinel-2 Derived Phenology in Western Himalayan Moist Deciduous Forests. _Frontiers of Earth Science_ (under review).
 
 ---
 
